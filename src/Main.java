@@ -1,15 +1,23 @@
 import java.util.Scanner;
 import java.util.TreeMap;
 
-
 public class Main {
     public static void main(String[] args) {
-        Converter converter = new Converter();
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("Введите выражение: ");
         String input = scanner.nextLine();
 
+        try {
+            String result = calc(input);
+            System.out.println("Результат: " + result);
+        } catch (IllegalArgumentException | ArithmeticException e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        }
+    }
+
+    public static String calc(String input) {
+        Converter converter = new Converter();
         String[] tokens = input.split("\\s*[-+*/]\\s*");
 
         if (tokens.length != 2) {
@@ -34,9 +42,17 @@ public class Main {
         if (isRoman1) {
             a = converter.romanToInt(tokens[0]);
             b = converter.romanToInt(tokens[1]);
+
+            if (Math.abs(a) > 10 || Math.abs(b) > 10) {
+                throw new IllegalArgumentException("На входе римские числа в переводе не должны быть больше 10.");
+            }
         } else {
             a = Integer.parseInt(tokens[0]);
             b = Integer.parseInt(tokens[1]);
+
+            if (Math.abs(a) > 10 || Math.abs(b) > 10) {
+                throw new IllegalArgumentException("Арабские числа не должны быть больше 10 по модулю");
+            }
         }
 
         int result;
@@ -56,9 +72,9 @@ public class Main {
             if (result < 0) {
                 throw new IllegalArgumentException("Римские цифры не могут быть меньше 0");
             }
-            System.out.println(converter.intToRoman(result));
+            return converter.intToRoman(result);
         } else {
-            System.out.println(result);
+            return String.valueOf(result);
         }
     }
 }
